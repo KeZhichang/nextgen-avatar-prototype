@@ -122,6 +122,11 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+[data-demo-active] {
+  outline: 3px solid #6366f1;
+  outline-offset: 3px;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

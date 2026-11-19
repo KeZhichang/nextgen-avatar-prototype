@@ -27,8 +27,8 @@
       <div class="lg:col-span-8 space-y-5">
         <div class="flex items-center justify-between bg-white border border-slate-200 rounded-xl p-3">
           <div class="flex items-center gap-1 p-1 bg-slate-100 rounded-lg text-xs">
-            <button type="button" onclick="switchVersion('v1')" id="ver-v1" class="px-3 py-1.5 rounded-md text-slate-600">初稿 v1</button>
-            <button type="button" onclick="switchVersion('v2')" id="ver-v2" class="px-3 py-1.5 rounded-md bg-white text-slate-900 font-semibold shadow-sm">修订稿 v2（待审）</button>
+            <button type="button" data-demo-id="btn-review-first-version" onclick="switchVersion('v1')" id="ver-v1" class="px-3 py-1.5 rounded-md text-slate-600">初稿 v1</button>
+            <button type="button" data-demo-id="btn-review-version" onclick="switchVersion('v2')" id="ver-v2" class="px-3 py-1.5 rounded-md bg-white text-slate-900 font-semibold shadow-sm">修订稿 v2（待审）</button>
             <button type="button" onclick="switchVersion('final')" id="ver-final" class="px-3 py-1.5 rounded-md text-slate-600">正式交付版</button>
           </div>
           <span class="text-xs font-mono-num text-slate-500">1080P · 60fps</span>
