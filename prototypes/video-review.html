@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>视频审核与交付 · NextGen Avatar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="./shared.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900 min-h-screen">
+    <header class="h-14 bg-white border-b border-slate-200 px-8 flex items-center justify-between">
+      <div class="flex items-center gap-3 text-sm">
+        <span class="font-bold">NextGen Avatar</span>
+        <span class="text-slate-300">/</span>
+        <span class="font-mono-num text-slate-700">#NGA-20261108 · Q4 新品发布会口播</span>
+      </div>
+      <span id="header-badge" class="text-xs font-medium text-amber-700 bg-amber-50 px-3 py-1 rounded-lg">等待确认初稿 v2</span>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div class="lg:col-span-8 space-y-5">
+        <div class="flex items-center justify-between bg-white border border-slate-200 rounded-xl p-3">
+          <div class="flex items-center gap-1 p-1 bg-slate-100 rounded-lg text-xs">
+            <button type="button" onclick="switchVersion('v1')" id="ver-v1" class="px-3 py-1.5 rounded-md text-slate-600">初稿 v1</button>
+            <button type="button" onclick="switchVersion('v2')" id="ver-v2" class="px-3 py-1.5 rounded-md bg-white text-slate-900 font-semibold shadow-sm">修订稿 v2（待审）</button>
+            <button type="button" onclick="switchVersion('final')" id="ver-final" class="px-3 py-1.5 rounded-md text-slate-600">正式交付版</button>
+          </div>
+          <span class="text-xs font-mono-num text-slate-500">1080P · 60fps</span>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div class="relative aspect-video bg-slate-950">
+            <img src="../src/assets/images/video_preview_frame_1794909270061.jpg" class="w-full h-full object-cover" referrerPolicy="no-referrer" />
+            <div class="absolute top-3 left-3 bg-black/65 text-white text-[11px] px-2.5 py-1 rounded font-mono-num" id="player-ver-tag">PREVIEW v2</div>
+            <div class="absolute inset-x-0 bottom-0 p-3.5 bg-gradient-to-t from-black/80 to-transparent text-white flex items-center gap-3">
+              <button type="button" onclick="togglePlay(this)" class="w-7 h-7 rounded-full bg-white text-slate-900 flex items-center justify-center"><i class="fa-solid fa-play text-[10px]"></i></button>
+              <div class="flex-1 h-1.5 bg-white/30 rounded-full overflow-hidden"><div class="h-full bg-indigo-500 w-1/3"></div></div>
+              <span class="font-mono-num text-xs">00:24 / 01:12</span>
+            </div>
+          </div>
+        </div>
+
+        <section class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 text-xs">
+          <div class="font-semibold text-slate-900">版本与确认记录</div>
+          <div id="history-log" class="space-y-2.5">
+            <div class="flex justify-between pb-2 border-b border-slate-100">
+              <span><strong>v2</strong> 已上传 · 已调慢 00:24 语速</span>
+              <span class="font-mono-num text-slate-400">11-16 14:32</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-amber-700"><strong>v1</strong> 申请修改 · 00:24 语速稍快</span>
+              <span class="font-mono-num text-slate-400">11-15 18:05</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="lg:col-span-4 bg-white border border-slate-200 rounded-xl p-5 space-y-5">
+        <div id="approve-box" class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-3">
+          <div class="text-xs font-semibold text-emerald-900">确认无误即可交付（扣 1 条配额）</div>
+          <button
+            type="button"
+            data-demo-id="btn-approve-video"
+            onclick="approveVideo()"
+            class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg"
+          >
+            确认通过并交付
+          </button>
+        </div>
+
+        <div id="delivered-box" class="hidden p-4 rounded-xl bg-emerald-50 border border-emerald-300 space-y-3 text-xs">
+          <div class="font-semibold text-emerald-900"><i class="fa-solid fa-circle-check text-emerald-600 mr-1.5"></i>已确认交付（剩余 3 条）</div>
+          <button type="button" onclick="showReviewToast('开始下载无水印成片 (MP4)')" class="w-full py-2.5 bg-indigo-600 text-white font-medium rounded-lg">
+            下载无水印成片
+          </button>
+        </div>
+
+        <form id="revision-form" onsubmit="submitRevision(event)" class="pt-4 border-t border-slate-200 space-y-3">
+          <div class="text-xs font-semibold">申请修改</div>
+          <textarea id="revision-note" rows="3" placeholder="填写修改意见…" class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-600"></textarea>
+          <button type="submit" class="w-full py-2 border border-slate-300 bg-white hover:bg-slate-50 text-xs font-medium rounded-lg">
+            提交修改意见
+          </button>
+        </form>
+      </aside>
+    </main>
+
+    <div id="review-toast" class="hidden ng-toast fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-lg"></div>
+
+    <script>
+      function switchVersion(v) {
+        ['v1', 'v2', 'final'].forEach((k) => {
+          document.getElementById('ver-' + k).className =
+            k === v ? 'px-3 py-1.5 rounded-md bg-white text-slate-900 font-semibold shadow-sm' : 'px-3 py-1.5 rounded-md text-slate-600';
+        });
+        const tag = document.getElementById('player-ver-tag');
+        tag.textContent = v === 'final' ? 'FINAL MASTER' : 'PREVIEW ' + v;
+        tag.classList.remove('ng-panel-enter');
+        void tag.offsetWidth;
+        tag.classList.add('ng-panel-enter');
+      }
+      function togglePlay(b) {
+        const i = b.querySelector('i');
+        i.className = i.className.includes('play') ? 'fa-solid fa-pause text-[10px]' : 'fa-solid fa-play text-[10px]';
+      }
+      function approveVideo() {
+        document.getElementById('approve-box').classList.add('hidden');
+        document.getElementById('revision-form').classList.add('hidden');
+        const delivered = document.getElementById('delivered-box');
+        delivered.classList.remove('hidden');
+        delivered.classList.add('ng-panel-enter');
+        const badge = document.getElementById('header-badge');
+        badge.className = 'text-xs font-medium text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg ng-panel-enter';
+        badge.textContent = '已确认交付';
+        switchVersion('final');
+        const item = document.createElement('div');
+        item.className = 'flex justify-between pb-2 border-b border-slate-100 text-emerald-700 ng-panel-enter';
+        item.innerHTML = '<span><strong>正式版</strong> 客户确认通过</span><span class="font-mono-num">刚刚</span>';
+        document.getElementById('history-log').prepend(item);
+      }
+      function submitRevision(e) {
+        e.preventDefault();
+        const note = document.getElementById('revision-note').value.trim() || '请微调口播停顿';
+        const item = document.createElement('div');
+        item.className = 'flex justify-between pb-2 border-b border-slate-100 text-amber-700 ng-panel-enter';
+        item.innerHTML = `<span><strong>v2</strong> 申请修改 · ${note}</span><span class="font-mono-num">刚刚</span>`;
+        document.getElementById('history-log').prepend(item);
+        document.getElementById('revision-note').value = '';
+      }
+      let rt;
+      function showReviewToast(m) {
+        const el = document.getElementById('review-toast');
+        el.textContent = m;
+        el.classList.remove('hidden');
+        clearTimeout(rt);
+        rt = setTimeout(() => el.classList.add('hidden'), 2000);
+      }
+    </script>
+  </body>
+</html>

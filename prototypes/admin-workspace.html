@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>制作协同与交付台 · NextGen Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="./shared.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900 h-screen flex flex-col overflow-hidden">
+    <header class="h-14 bg-slate-900 text-white px-6 flex items-center justify-between shrink-0 text-xs">
+      <div class="flex items-center gap-3">
+        <span class="font-bold text-sm">NextGen Studio</span>
+        <span class="text-slate-600">/</span>
+        <span class="font-mono-num text-slate-300">#NGA-20261108 · Sarah Lin</span>
+      </div>
+      <span>制作师：Leo Chen</span>
+    </header>
+
+    <div class="flex-1 min-h-0 grid grid-cols-12">
+      <!-- 左侧素材与版本上传 -->
+      <aside class="col-span-4 bg-white border-r border-slate-200 p-5 space-y-5 overflow-y-auto text-xs">
+        <section class="space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="font-semibold text-slate-900">客户素材</span>
+            <button type="button" data-demo-id="btn-download-assets" onclick="showStudioToast('正在打包下载全部客户素材 (.zip)')" class="text-indigo-600 font-medium">打包下载</button>
+          </div>
+          <div class="p-2.5 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-between">
+            <span class="truncate">Sarah_正面照.jpg</span>
+            <i class="fa-solid fa-download text-slate-400"></i>
+          </div>
+          <div class="p-2.5 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-between">
+            <span class="truncate">干声样本_48kHz.wav</span>
+            <i class="fa-solid fa-download text-slate-400"></i>
+          </div>
+          <div class="p-2.5 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-between">
+            <span class="truncate">Q4_新品口播台词.docx</span>
+            <i class="fa-solid fa-download text-slate-400"></i>
+          </div>
+        </section>
+
+        <section class="pt-4 border-t border-slate-200 space-y-3">
+          <div class="font-semibold text-slate-900">上传版本</div>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="setType('preview')" id="up-preview" class="py-2 rounded-lg border-2 border-indigo-600 bg-indigo-50/40 text-indigo-700 font-medium">预览初稿</button>
+            <button type="button" data-demo-id="btn-toggle-final" onclick="setType('final')" id="up-final" class="py-2 rounded-lg border border-slate-200">正式成片</button>
+          </div>
+          <input type="text" id="ver-note" value="已优化结尾语气并交付成片" class="w-full px-3 py-2 border border-slate-200 rounded-lg" />
+          <button
+            type="button"
+            data-demo-id="btn-upload-deliver"
+            onclick="deliverUpload()"
+            class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg"
+          >
+            <span id="deliver-label">推送初稿至客户</span>
+          </button>
+        </section>
+
+        <section class="pt-4 border-t border-slate-200">
+          <div class="font-semibold text-slate-900 mb-2">客户审核意见</div>
+          <div class="p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-900">
+            v1：00:24 语速稍快，请放慢 10%
+          </div>
+        </section>
+      </aside>
+
+      <!-- 右侧团队聊天窗 -->
+      <main class="col-span-8 flex flex-col min-h-0 bg-slate-50">
+        <div class="h-12 bg-white border-b border-slate-200 px-6 flex items-center justify-between shrink-0 text-xs">
+          <span class="font-semibold">Sarah Lin · Apex Labs (US)</span>
+          <span class="text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded">等待客户确认 v2</span>
+        </div>
+
+        <div id="admin-chat" class="flex-1 overflow-y-auto p-6 space-y-4 text-xs">
+          <div class="flex items-start gap-2.5">
+            <img src="../src/assets/images/client_user_avatar_1794909270826.jpg" class="w-7 h-7 rounded-full object-cover shrink-0" referrerPolicy="no-referrer" />
+            <div class="bg-white border border-slate-200 px-3.5 py-2 rounded-xl rounded-tl-sm max-w-md">
+              初稿 v1 00:24 处语速稍快，麻烦调整一下。
+            </div>
+          </div>
+          <div class="flex items-start justify-end gap-2.5">
+            <div class="bg-slate-900 text-white px-3.5 py-2 rounded-xl rounded-tr-sm max-w-md">
+              收到，v2 修订版已上传至审片中心，请查收。
+            </div>
+            <img src="../src/assets/images/team_producer_headshot_1794909269757.jpg" class="w-7 h-7 rounded-full object-cover shrink-0" referrerPolicy="no-referrer" />
+          </div>
+        </div>
+
+        <div class="bg-white border-t border-slate-200 p-4 space-y-2 shrink-0 text-xs">
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="fillReply('素材已核验通过，预计明晚交付初稿。')" class="px-2.5 py-1 rounded bg-slate-100">素材通过</button>
+            <button type="button" data-demo-id="btn-quick-reply" onclick="fillReply('正式成片已交付，请前往工作台下载。')" class="px-2.5 py-1 rounded bg-slate-100">成片已交付</button>
+          </div>
+          <form onsubmit="sendReply(event)" class="flex gap-2">
+            <input type="text" id="reply-input" placeholder="回复客户…" class="flex-1 px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-600" />
+            <button type="submit" data-demo-id="btn-send-reply" class="px-4 py-2 bg-slate-900 text-white rounded-lg font-medium">发送</button>
+          </form>
+        </div>
+      </main>
+    </div>
+
+    <div id="studio-toast" class="hidden ng-toast fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-lg"></div>
+
+    <script>
+      let upMode = 'preview';
+      function setType(m) {
+        upMode = m;
+        document.getElementById('up-preview').className = m === 'preview' ? 'py-2 rounded-lg border-2 border-indigo-600 bg-indigo-50/40 text-indigo-700 font-medium' : 'py-2 rounded-lg border border-slate-200';
+        document.getElementById('up-final').className = m === 'final' ? 'py-2 rounded-lg border-2 border-indigo-600 bg-indigo-50/40 text-indigo-700 font-medium' : 'py-2 rounded-lg border border-slate-200';
+        document.getElementById('deliver-label').textContent = m === 'final' ? '交付正式成片' : '推送初稿至客户';
+      }
+      function deliverUpload() {
+        const stream = document.getElementById('admin-chat');
+        const note = document.getElementById('ver-note').value;
+        const div = document.createElement('div');
+        div.className = 'flex items-start justify-end gap-2.5 ng-panel-enter';
+        div.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 text-emerald-900 px-3.5 py-2 rounded-xl text-xs">${upMode === 'final' ? '已交付正式成片' : '已推送新预览'}：${note}</div><img src="../src/assets/images/team_producer_headshot_1794909269757.jpg" class="w-7 h-7 rounded-full object-cover shrink-0" />`;
+        stream.appendChild(div);
+        stream.scrollTop = stream.scrollHeight;
+        showStudioToast('已推送并通知客户');
+      }
+      function fillReply(t) {
+        document.getElementById('reply-input').value = t;
+      }
+      function sendReply(e) {
+        e.preventDefault();
+        const input = document.getElementById('reply-input');
+        const v = input.value.trim();
+        if (!v) return;
+        const stream = document.getElementById('admin-chat');
+        const div = document.createElement('div');
+        div.className = 'flex items-start justify-end gap-2.5 ng-panel-enter';
+        div.innerHTML = `<div class="bg-slate-900 text-white px-3.5 py-2 rounded-xl rounded-tr-sm max-w-md">${v}</div><img src="../src/assets/images/team_producer_headshot_1794909269757.jpg" class="w-7 h-7 rounded-full object-cover shrink-0" />`;
+        stream.appendChild(div);
+        input.value = '';
+        stream.scrollTop = stream.scrollHeight;
+      }
+      let st;
+      function showStudioToast(m) {
+        const el = document.getElementById('studio-toast');
+        el.textContent = m;
+        el.classList.remove('hidden');
+        clearTimeout(st);
+        st = setTimeout(() => el.classList.add('hidden'), 2000);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>套餐、报价与客户管理 · NextGen Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="./shared.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900 min-h-screen">
+    <header class="h-14 bg-white border-b border-slate-200 px-8 flex items-center justify-between text-sm">
+      <div class="flex items-center gap-3">
+        <span class="font-bold">NextGen Studio</span>
+        <span class="text-slate-300">/</span>
+        <span class="text-slate-600">套餐管理、定制报价与客户档案</span>
+      </div>
+      <span class="text-xs text-slate-500">管理员：Alex（全权限）</span>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-8 py-6 space-y-5">
+      <div class="flex items-center gap-1 p-1 bg-slate-200/70 rounded-xl w-fit text-xs">
+        <button type="button" data-demo-id="tab-pricing" onclick="switchTab('pricing')" id="t-pricing" class="px-4 py-2 rounded-lg bg-white font-semibold shadow-sm">套餐与加项定价</button>
+        <button type="button" data-demo-id="tab-quote" onclick="switchTab('quote')" id="t-quote" class="px-4 py-2 rounded-lg text-slate-600">定制报价链接</button>
+        <button type="button" data-demo-id="tab-clients" onclick="switchTab('clients')" id="t-clients" class="px-4 py-2 rounded-lg text-slate-600">客户管理与档案</button>
+        <button type="button" data-demo-id="tab-website" onclick="switchTab('website')" id="t-website" class="px-4 py-2 rounded-lg text-slate-600">官网入口配置</button>
+      </div>
+
+      <!-- Tab 1: 套餐管理 + 加项 + 续购优惠规则 -->
+      <section id="panel-pricing" class="space-y-4 ng-panel-enter">
+        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div class="px-6 py-3.5 border-b border-slate-200 flex items-center justify-between">
+            <div>
+              <span class="text-sm font-semibold">动态套餐与续购优惠规则（USD $）</span>
+              <span class="text-xs text-slate-400 ml-2">修改保存后即时生效，无需人工改价</span>
+            </div>
+            <button
+              type="button"
+              data-demo-id="btn-save-pricing"
+              onclick="showToast('套餐、加项价格与续购规则已保存并生效')"
+              class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-lg"
+            >
+              保存套餐配置
+            </button>
+          </div>
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 bg-slate-50 text-slate-500">
+                <th class="py-2.5 px-6">套餐标识</th>
+                <th class="py-2.5 px-4">套餐名称</th>
+                <th class="py-2.5 px-4">视频条数</th>
+                <th class="py-2.5 px-4">首购价 ($)</th>
+                <th class="py-2.5 px-4">续购优惠价 ($)</th>
+                <th class="py-2.5 px-6">续购资格规则</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr>
+                <td class="py-3 px-6 font-mono-num">trial_1</td>
+                <td class="py-3 px-4 font-medium">Starter 尝鲜体验</td>
+                <td class="py-3 px-4"><input type="number" value="1" class="w-14 px-2 py-1 border border-slate-200 rounded tabular-nums" /></td>
+                <td class="py-3 px-4"><input type="number" value="59" class="w-20 px-2 py-1 border border-slate-200 rounded tabular-nums" /></td>
+                <td class="py-3 px-4 text-slate-400">不可续购</td>
+                <td class="py-3 px-6"><span class="px-2 py-0.5 rounded bg-amber-50 text-amber-800">仅限新客首单</span></td>
+              </tr>
+              <tr>
+                <td class="py-3 px-6 font-mono-num">pro_5</td>
+                <td class="py-3 px-4 font-medium">Pro 专业 5 条</td>
+                <td class="py-3 px-4"><input type="number" value="5" class="w-14 px-2 py-1 border border-slate-200 rounded tabular-nums" /></td>
+                <td class="py-3 px-4"><input type="number" value="349" class="w-20 px-2 py-1 border border-slate-200 rounded tabular-nums" /></td>
+                <td class="py-3 px-4"><input type="number" value="299" class="w-20 px-2 py-1 border border-indigo-300 rounded tabular-nums font-medium" /></td>
+                <td class="py-3 px-6"><span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700">老客享 85 折</span></td>
+              </tr>
+              <tr>
+                <td class="py-3 px-6 font-mono-num">ent_15</td>
+                <td class="py-3 px-4 font-medium">Enterprise 15 条</td>
+                <td class="py-3 px-4"><input type="number" value="15" class="w-14 px-2 py-1 border border-slate-200 rounded tabular-nums" /></td>
+                <td class="py-3 px-4"><input type="number" value="899" class="w-20 px-2 py-1 border border-slate-200 rounded tabular-nums" /></td>
+                <td class="py-3 px-4"><input type="number" value="765" class="w-20 px-2 py-1 border border-indigo-300 rounded tabular-nums font-medium" /></td>
+                <td class="py-3 px-6"><span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700">老客享 85 折</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 加项服务定价配置 -->
+        <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-3 text-xs">
+          <div class="flex items-center justify-between">
+            <span class="font-semibold text-slate-900">额外加项服务定价（USD $）</span>
+            <span class="text-slate-400">按需手动购买时客户可自由勾选</span>
+          </div>
+          <div class="grid grid-cols-3 gap-4">
+            <div class="p-3 rounded-lg border border-slate-200 bg-slate-50/70 flex items-center justify-between">
+              <span class="font-medium">英文口播脚本撰写</span>
+              <div class="flex items-center gap-1 font-mono-num">
+                <span>$</span>
+                <input type="number" value="49" class="w-14 px-2 py-1 bg-white border border-slate-200 rounded tabular-nums" />
+              </div>
+            </div>
+            <div class="p-3 rounded-lg border border-slate-200 bg-slate-50/70 flex items-center justify-between">
+              <span class="font-medium">单条时长扩容至 5 分钟</span>
+              <div class="flex items-center gap-1 font-mono-num">
+                <span>$</span>
+                <input type="number" value="79" class="w-14 px-2 py-1 bg-white border border-slate-200 rounded tabular-nums" />
+              </div>
+            </div>
+            <div class="p-3 rounded-lg border border-slate-200 bg-slate-50/70 flex items-center justify-between">
+              <span class="font-medium">48h 加急交付通道</span>
+              <div class="flex items-center gap-1 font-mono-num">
+                <span>$</span>
+                <input type="number" value="99" class="w-14 px-2 py-1 bg-white border border-slate-200 rounded tabular-nums" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 2: 定制报价 -->
+      <section id="panel-quote" class="hidden bg-white border border-slate-200 rounded-xl p-6 grid grid-cols-2 gap-6 text-xs">
+        <form onsubmit="genQuote(event)" class="space-y-3">
+          <div class="text-sm font-semibold">创建人工定制报价单（USD）</div>
+          <div>
+            <label class="block text-slate-500 mb-1">绑定客户邮箱</label>
+            <input type="email" value="michael@eduscale.io" class="w-full px-3 py-2 border border-slate-200 rounded-lg" placeholder="客户邮箱" />
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-slate-500 mb-1">交付视频条数</label>
+              <input type="number" value="10" class="w-full px-3 py-2 border border-slate-200 rounded-lg tabular-nums" />
+            </div>
+            <div>
+              <label class="block text-slate-500 mb-1">报价总额 (USD $)</label>
+              <input type="number" id="q-price" value="1250" class="w-full px-3 py-2 border border-slate-200 rounded-lg tabular-nums" />
+            </div>
+          </div>
+          <button type="submit" data-demo-id="btn-gen-quote" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg">
+            生成 Stripe 付款链接
+          </button>
+        </form>
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
+          <div class="space-y-2">
+            <div class="font-semibold">专属 Stripe 付款链接（支持 Card / Apple Pay / ACH）</div>
+            <div id="quote-url" class="p-2.5 bg-white border border-slate-200 rounded font-mono-num text-indigo-700 break-all">
+              https://portal.nextgenavatar.com/checkout?quote=QUOTE-9021&amp;amount=1250&amp;currency=USD
+            </div>
+            <div class="text-[11px] text-slate-500">客户付款成功后将自动创建订单、入账配额并邮件通知团队。</div>
+          </div>
+          <button type="button" onclick="showToast('已复制报价链接')" class="px-3 py-1.5 border border-slate-200 bg-white rounded-lg w-fit mt-3">复制链接</button>
+        </div>
+      </section>
+
+      <!-- Tab 3: 客户管理（账号、联系信息、历史订单、已建立人物资料） -->
+      <section id="panel-clients" class="hidden grid grid-cols-12 gap-5 text-xs">
+        <!-- 左侧客户列表 -->
+        <div class="col-span-5 bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div class="p-3.5 border-b border-slate-200 flex items-center justify-between">
+            <span class="font-semibold text-sm">客户列表 (3)</span>
+            <input type="text" oninput="filterClientList(this.value)" placeholder="筛选姓名或邮箱…" class="px-2.5 py-1 border border-slate-200 rounded-md text-[11px] w-36" />
+          </div>
+          <div class="divide-y divide-slate-100">
+            <button type="button" onclick="selectClient('sarah', this)" class="client-row w-full text-left p-3.5 bg-indigo-50/50 border-r-2 border-indigo-600 flex items-center justify-between" data-q="sarah lin apexlabs gmail">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <img src="../src/assets/images/client_user_avatar_1794909270826.jpg" class="w-8 h-8 rounded-full object-cover shrink-0" referrerPolicy="no-referrer" />
+                <div class="min-w-0">
+                  <div class="font-semibold text-slate-900 truncate">Sarah Lin · Apex Labs</div>
+                  <div class="text-[11px] text-slate-500 truncate">sarah.lin@gmail.com</div>
+                </div>
+              </div>
+              <span class="text-indigo-700 font-semibold tabular-nums shrink-0">余 4 条</span>
+            </button>
+            <button type="button" onclick="selectClient('michael', this)" class="client-row w-full text-left p-3.5 hover:bg-slate-50 flex items-center justify-between" data-q="michael ross eduscale">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <img src="../src/assets/images/avatar_male_founder_1794909269997.jpg" class="w-8 h-8 rounded-full object-cover shrink-0" referrerPolicy="no-referrer" />
+                <div class="min-w-0">
+                  <div class="font-semibold text-slate-900 truncate">Michael Ross · EduScale</div>
+                  <div class="text-[11px] text-slate-500 truncate">michael@eduscale.io</div>
+                </div>
+              </div>
+              <span class="text-slate-600 font-semibold tabular-nums shrink-0">余 12 条</span>
+            </button>
+            <button type="button" onclick="selectClient('emily', this)" class="client-row w-full text-left p-3.5 hover:bg-slate-50 flex items-center justify-between" data-q="emily clark medflow">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <img src="../src/assets/images/avatar_presenter_studio_1794909268258.jpg" class="w-8 h-8 rounded-full object-cover shrink-0" referrerPolicy="no-referrer" />
+                <div class="min-w-0">
+                  <div class="font-semibold text-slate-900 truncate">Emily Clark · MedFlow</div>
+                  <div class="text-[11px] text-slate-500 truncate">emily@medflow.us</div>
+                </div>
+              </div>
+              <span class="text-slate-600 font-semibold tabular-nums shrink-0">余 1 条</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 右侧客户档案详情 -->
+        <div id="client-dossier" class="col-span-7 bg-white border border-slate-200 rounded-xl p-5 space-y-4">
+          <div class="flex items-start justify-between pb-3.5 border-b border-slate-100">
+            <div>
+              <div id="cd-name" class="text-sm font-bold text-slate-900">Sarah Lin · Apex Labs (US)</div>
+              <div id="cd-contact" class="text-slate-500 mt-0.5 font-mono-num">sarah.lin@gmail.com · +1 (415) 890-3321 · San Francisco</div>
+            </div>
+            <div class="text-right tabular-nums">
+              <div class="font-semibold text-emerald-700" id="cd-spent">累计付款 $648</div>
+              <div class="text-[11px] text-slate-500" id="cd-quota">老客续购资格 · 余 4 条</div>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <div class="font-semibold text-slate-900">历史订单记录</div>
+            <div id="cd-orders" class="divide-y divide-slate-100 border border-slate-200 rounded-lg overflow-hidden">
+              <div class="px-3.5 py-2 flex items-center justify-between bg-slate-50/40">
+                <span><span class="font-mono-num font-semibold mr-2">#NGA-20261117</span>Pro 5-Pack（续购 85 折）</span>
+                <span class="text-emerald-700 font-medium">$299 · 等待素材</span>
+              </div>
+              <div class="px-3.5 py-2 flex items-center justify-between">
+                <span><span class="font-mono-num font-semibold mr-2">#NGA-20261108</span>Q4 产品发布会口播</span>
+                <span class="text-amber-700 font-medium">$349 · 等待确认 v2</span>
+              </div>
+              <div class="px-3.5 py-2 flex items-center justify-between">
+                <span><span class="font-mono-num font-semibold mr-2">#NGA-20261024</span>CEO 年度致辞</span>
+                <span class="text-slate-500">已交付 · 1080P</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <div class="font-semibold text-slate-900">已建立的可复用人物资料</div>
+            <div id="cd-avatars" class="grid grid-cols-2 gap-3">
+              <div class="p-2.5 rounded-lg border border-slate-200 bg-slate-50 flex items-center gap-2.5">
+                <img src="../src/assets/images/avatar_presenter_studio_1794909268258.jpg" class="w-9 h-9 rounded object-cover" referrerPolicy="no-referrer" />
+                <div class="min-w-0">
+                  <div class="font-medium truncate">Sarah · 商务白西装</div>
+                  <div class="text-[11px] text-slate-500">含 48kHz 英文干声</div>
+                </div>
+              </div>
+              <div class="p-2.5 rounded-lg border border-slate-200 bg-slate-50 flex items-center gap-2.5">
+                <img src="../src/assets/images/avatar_male_founder_1794909269997.jpg" class="w-9 h-9 rounded object-cover" referrerPolicy="no-referrer" />
+                <div class="min-w-0">
+                  <div class="font-medium truncate">David · 创始人形象</div>
+                  <div class="text-[11px] text-slate-500">已用于 2 条历史交付</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 4: 官网入口配置 -->
+      <section id="panel-website" class="hidden bg-white border border-slate-200 rounded-xl p-6 space-y-3 text-xs">
+        <div class="text-sm font-semibold">官网（nextgenavatar.com）套餐跳转链接</div>
+        <div class="text-slate-500">在官网套餐按钮中配置下方跳转链接，用户点击后将自动带入所选套餐进入登录与结算流程：</div>
+        <div class="p-3 bg-slate-50 border rounded-lg font-mono-num text-indigo-700">https://portal.nextgenavatar.com/auth.html?from=nextgenavatar.com&amp;plan={package_id}&amp;currency=USD&amp;redirect=checkout</div>
+      </section>
+    </main>
+
+    <div id="cfg-toast" class="hidden ng-toast fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-lg"></div>
+
+    <script>
+      const CLIENT_DATA = {
+        sarah: {
+          name: 'Sarah Lin · Apex Labs (US)',
+          contact: 'sarah.lin@gmail.com · +1 (415) 890-3321 · San Francisco',
+          spent: '累计付款 $648',
+          quota: '老客续购资格 · 余 4 条',
+          orders: [
+            ['#NGA-20261117', 'Pro 5-Pack（续购 85 折）', '$299 · 等待素材', 'text-emerald-700 font-medium'],
+            ['#NGA-20261108', 'Q4 产品发布会口播', '$349 · 等待确认 v2', 'text-amber-700 font-medium'],
+            ['#NGA-20261024', 'CEO 年度致辞', '已交付 · 1080P', 'text-slate-500'],
+          ],
+        },
+        michael: {
+          name: 'Michael Ross · EduScale Inc.',
+          contact: 'michael@eduscale.io · +1 (646) 441-9082 · New York',
+          spent: '累计付款 $899',
+          quota: 'Enterprise 客户 · 余 12 条',
+          orders: [
+            ['#NGA-20261105', 'Enterprise 15-Pack (ACH)', '$899 · 需要修改', 'text-rose-700 font-medium'],
+          ],
+        },
+        emily: {
+          name: 'Emily Clark · MedFlow Health',
+          contact: 'emily@medflow.us · +1 (206) 712-4509 · Seattle',
+          spent: '累计付款 $59',
+          quota: '新客首单体验 · 余 1 条',
+          orders: [
+            ['#NGA-20261112', 'Starter Trial (Apple Pay)', '$59 · 制作中', 'text-indigo-700 font-medium'],
+          ],
+        },
+      };
+
+      function selectClient(key, btn) {
+        document.querySelectorAll('.client-row').forEach((r) => (r.className = 'client-row w-full text-left p-3.5 hover:bg-slate-50 flex items-center justify-between'));
+        btn.className = 'client-row w-full text-left p-3.5 bg-indigo-50/50 border-r-2 border-indigo-600 flex items-center justify-between';
+        const d = CLIENT_DATA[key];
+        document.getElementById('cd-name').textContent = d.name;
+        document.getElementById('cd-contact').textContent = d.contact;
+        document.getElementById('cd-spent').textContent = d.spent;
+        document.getElementById('cd-quota').textContent = d.quota;
+        document.getElementById('cd-orders').innerHTML = d.orders
+          .map(
+            (o) =>
+              `<div class="px-3.5 py-2 flex items-center justify-between"><span><span class="font-mono-num font-semibold mr-2">${o[0]}</span>${o[1]}</span><span class="${o[3]}">${o[2]}</span></div>`,
+          )
+          .join('');
+        const dossier = document.getElementById('client-dossier');
+        dossier.classList.remove('ng-panel-enter');
+        void dossier.offsetWidth;
+        dossier.classList.add('ng-panel-enter');
+      }
+
+      function filterClientList(q) {
+        const s = q.trim().toLowerCase();
+        document.querySelectorAll('.client-row').forEach((r) => {
+          r.classList.toggle('hidden', Boolean(s) && !r.dataset.q.includes(s));
+        });
+      }
+
+      function switchTab(t) {
+        ['pricing', 'quote', 'clients', 'website'].forEach((k) => {
+          const panel = document.getElementById('panel-' + k);
+          panel.classList.toggle('hidden', k !== t);
+          if (k === t) {
+            panel.classList.remove('ng-panel-enter');
+            void panel.offsetWidth;
+            panel.classList.add('ng-panel-enter');
+          }
+          document.getElementById('t-' + k).className = k === t ? 'px-4 py-2 rounded-lg bg-white font-semibold shadow-sm' : 'px-4 py-2 rounded-lg text-slate-600';
+        });
+      }
+      function genQuote(e) {
+        e.preventDefault();
+        const code = 'QUOTE-' + Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('quote-url').textContent = 'https://portal.nextgenavatar.com/checkout?quote=' + code + '&amount=' + (document.getElementById('q-price').value || 1250) + '&currency=USD';
+        showToast('已生成 ' + code);
+      }
+      let ct;
+      function showToast(m) {
+        const el = document.getElementById('cfg-toast');
+        el.textContent = m;
+        el.classList.remove('hidden');
+        clearTimeout(ct);
+        ct = setTimeout(() => el.classList.add('hidden'), 2000);
+      }
+    </script>
+  </body>
+</html>

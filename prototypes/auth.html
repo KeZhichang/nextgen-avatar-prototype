@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>登录 · NextGen Avatar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="./shared.css" />
+  </head>
+  <body class="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
+    <header class="bg-white border-b border-slate-200 px-8 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <span class="text-base font-bold tracking-tight text-slate-900">NextGen Avatar</span>
+        <span class="text-xs text-slate-400">· 客户服务平台</span>
+      </div>
+      <a href="#" onclick="return false;" class="text-xs text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 bg-white flex items-center gap-1.5">
+        <i class="fa-solid fa-arrow-left text-[10px]"></i>
+        <span>返回 nextgenavatar.com</span>
+      </a>
+    </header>
+
+    <main class="flex-1 flex items-center justify-center p-8">
+      <section class="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-8 shadow-sm space-y-6">
+        <div class="text-center space-y-1.5">
+          <h1 id="auth-heading" class="text-xl font-bold text-slate-900 tracking-tight">登录 NextGen Avatar</h1>
+          <p class="text-xs text-slate-500">登录您的客户工作台，管理数字人视频订单与成片交付</p>
+        </div>
+
+        <div class="flex items-center gap-1 p-1 bg-slate-100 rounded-lg text-xs">
+          <button
+            type="button"
+            data-demo-id="tab-login"
+            onclick="setAuthMode('login')"
+            id="tab-login"
+            class="flex-1 py-2 font-medium rounded-md bg-white text-slate-900 shadow-sm"
+          >
+            登录
+          </button>
+          <button
+            type="button"
+            data-demo-id="tab-register"
+            onclick="setAuthMode('register')"
+            id="tab-register"
+            class="flex-1 py-2 font-medium rounded-md text-slate-600 hover:text-slate-900"
+          >
+            注册
+          </button>
+          <button
+            type="button"
+            onclick="setAuthMode('forgot')"
+            id="tab-forgot"
+            class="flex-1 py-2 font-medium rounded-md text-slate-600 hover:text-slate-900"
+          >
+            找回密码
+          </button>
+        </div>
+
+        <div id="auth-body" class="space-y-5 ng-panel-enter">
+          <div id="google-auth-wrap">
+            <button
+              type="button"
+              data-demo-id="btn-google-login"
+              onclick="openGoogleOAuth()"
+              class="w-full py-2.5 px-4 bg-white hover:bg-slate-50 border border-slate-300 rounded-lg text-sm font-medium text-slate-800 flex items-center justify-center gap-2.5 shadow-xs"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  fill="#4285F4"
+                  d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z"
+                />
+              </svg>
+              <span>使用 Google 邮箱登录</span>
+            </button>
+
+            <div class="relative my-5 flex items-center">
+              <div class="flex-1 border-t border-slate-200"></div>
+              <span class="px-3 text-[11px] text-slate-400">或使用工作邮箱密码</span>
+              <div class="flex-1 border-t border-slate-200"></div>
+            </div>
+          </div>
+
+          <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
+            <div id="field-name" class="hidden">
+              <label class="block text-xs font-medium text-slate-700 mb-1">姓名 / 公司</label>
+              <input
+                type="text"
+                value="Sarah Lin · Apex Labs"
+                class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-600"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-700 mb-1">邮箱地址</label>
+              <input
+                type="email"
+                id="input-email"
+                data-demo-id="input-email"
+                value="sarah.lin@gmail.com"
+                required
+                placeholder="name@company.com"
+                class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-600"
+              />
+            </div>
+
+            <div id="field-password">
+              <label class="block text-xs font-medium text-slate-700 mb-1">密码</label>
+              <input
+                type="password"
+                id="input-password"
+                value="••••••••••••"
+                required
+                class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-600"
+              />
+            </div>
+
+            <div id="field-forgot-tip" class="hidden text-xs text-slate-500">
+              输入注册邮箱，我们将发送密码重置链接。
+            </div>
+
+            <button
+              type="submit"
+              data-demo-id="submit-login"
+              class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg"
+            >
+              <span id="submit-label">登录工作台</span>
+            </button>
+          </form>
+        </div>
+
+        <div
+          id="auth-toast"
+          class="hidden ng-toast p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2"
+        >
+          <i class="fa-solid fa-circle-check text-emerald-600"></i>
+          <span id="toast-msg">Google 邮箱授权成功，正在进入工作台…</span>
+        </div>
+      </section>
+    </main>
+
+    <!-- 模拟 Google OAuth 账号选择授权弹窗 -->
+    <div
+      id="google-oauth-modal"
+      class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-[2px] flex items-center justify-center p-6 ng-modal-backdrop"
+    >
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-sm overflow-hidden ng-modal-card">
+        <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z"/>
+              <path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z"/>
+            </svg>
+            <span class="text-xs font-medium text-slate-700">使用 Google 账号登录</span>
+          </div>
+          <button
+            type="button"
+            onclick="closeGoogleOAuth()"
+            class="w-6 h-6 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div id="oauth-chooser" class="p-5 space-y-4 ng-panel-enter">
+          <div class="text-center space-y-1">
+            <h2 class="text-base font-semibold text-slate-900">选择账号</h2>
+            <p class="text-xs text-slate-500">
+              继续访问 <span class="text-indigo-600 font-medium">NextGen Avatar</span>
+            </p>
+          </div>
+
+          <div class="divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden">
+            <button
+              type="button"
+              data-demo-id="btn-google-account"
+              onclick="selectGoogleAccount('Sarah Lin', 'sarah.lin@gmail.com')"
+              class="w-full px-4 py-3 flex items-center justify-between hover:bg-indigo-50/50 text-left"
+            >
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="w-8 h-8 rounded-full bg-indigo-600 text-white text-xs font-semibold flex items-center justify-center shrink-0">S</span>
+                <div class="min-w-0">
+                  <div class="text-xs font-semibold text-slate-900">Sarah Lin</div>
+                  <div class="text-[11px] text-slate-500 truncate">sarah.lin@gmail.com</div>
+                </div>
+              </div>
+              <span class="text-[10px] text-indigo-600 font-medium shrink-0">已登录</span>
+            </button>
+
+            <button
+              type="button"
+              onclick="selectGoogleAccount('Sarah Lin (Work)', 'sarah@apexlabs.io')"
+              class="w-full px-4 py-3 flex items-center justify-between hover:bg-slate-50 text-left"
+            >
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="w-8 h-8 rounded-full bg-emerald-600 text-white text-xs font-semibold flex items-center justify-center shrink-0">A</span>
+                <div class="min-w-0">
+                  <div class="text-xs font-semibold text-slate-900">Sarah Lin · Apex Labs</div>
+                  <div class="text-[11px] text-slate-500 truncate">sarah@apexlabs.io</div>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
+            </button>
+          </div>
+
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            授权后 Google 将与 NextGen Avatar 共享您的姓名、邮箱与头像。
+          </p>
+        </div>
+
+        <div id="oauth-verifying" class="hidden p-8 text-center space-y-3 ng-panel-enter">
+          <div class="w-9 h-9 mx-auto rounded-full border-2 border-indigo-600 border-t-transparent animate-spin"></div>
+          <div id="oauth-verify-text" class="text-xs font-medium text-slate-800">正在验证 Google 账号授权…</div>
+          <div class="text-[11px] text-slate-400">正在安全登录工作台…</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentMode = 'login';
+      function triggerReplay(el) {
+        if (!el) return;
+        el.classList.remove('ng-panel-enter');
+        void el.offsetWidth;
+        el.classList.add('ng-panel-enter');
+      }
+
+      function setAuthMode(mode) {
+        currentMode = mode;
+        ['login', 'register', 'forgot'].forEach((m) => {
+          document.getElementById('tab-' + m).className =
+            m === mode
+              ? 'flex-1 py-2 font-medium rounded-md bg-white text-slate-900 shadow-sm'
+              : 'flex-1 py-2 font-medium rounded-md text-slate-600 hover:text-slate-900';
+        });
+        const headingMap = { login: '登录 NextGen Avatar', register: '注册客户账号', forgot: '重置登录密码' };
+        const btnMap = { login: '登录工作台', register: '注册并进入工作台', forgot: '发送重置邮件' };
+        document.getElementById('auth-heading').textContent = headingMap[mode];
+        document.getElementById('submit-label').textContent = btnMap[mode];
+        document.getElementById('google-auth-wrap').classList.toggle('hidden', mode === 'forgot');
+        document.getElementById('field-name').classList.toggle('hidden', mode !== 'register');
+        document.getElementById('field-password').classList.toggle('hidden', mode === 'forgot');
+        document.getElementById('field-forgot-tip').classList.toggle('hidden', mode !== 'forgot');
+        document.getElementById('auth-toast').classList.add('hidden');
+        triggerReplay(document.getElementById('auth-body'));
+      }
+
+      function openGoogleOAuth() {
+        document.getElementById('oauth-chooser').classList.remove('hidden');
+        document.getElementById('oauth-verifying').classList.add('hidden');
+        document.getElementById('google-oauth-modal').classList.remove('hidden');
+      }
+
+      function closeGoogleOAuth() {
+        document.getElementById('google-oauth-modal').classList.add('hidden');
+      }
+
+      function selectGoogleAccount(name, email) {
+        document.getElementById('oauth-chooser').classList.add('hidden');
+        const verifying = document.getElementById('oauth-verifying');
+        document.getElementById('oauth-verify-text').textContent = '正在验证 ' + name + ' (' + email + ')…';
+        verifying.classList.remove('hidden');
+        triggerReplay(verifying);
+
+        setTimeout(() => {
+          closeGoogleOAuth();
+          document.getElementById('input-email').value = email;
+          document.getElementById('toast-msg').textContent =
+            'Google 账号 (' + email + ') 登录成功，正在进入工作台…';
+          const toast = document.getElementById('auth-toast');
+          toast.classList.remove('hidden');
+          triggerReplay(toast);
+        }, 520);
+      }
+
+      function handleAuthSubmit(e) {
+        e.preventDefault();
+        const email = document.getElementById('input-email').value;
+        document.getElementById('toast-msg').textContent =
+          currentMode === 'forgot' ? '重置链接已发送至 ' + email : '登录成功，正在进入工作台…';
+        const toast = document.getElementById('auth-toast');
+        toast.classList.remove('hidden');
+        triggerReplay(toast);
+      }
+    </script>
+  </body>
+</html>
