@@ -1,0 +1,168 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
+
+:root {
+  --font-sans: "Plus Jakarta Sans", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  background-color: #f8fafc;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+body .text-xs {
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+body .text-sm {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+body [class~="text-[10px]"]:not(i) {
+  font-size: 0.75rem;
+}
+
+body [class~="text-[11px]"]:not(i) {
+  font-size: 0.8125rem;
+}
+
+body :is(input:not([type="checkbox"], [type="radio"]), textarea, select) {
+  font-size: 1rem;
+}
+
+/* Smooth interactive transitions across all prototype controls */
+button,
+a,
+input,
+select,
+textarea,
+label {
+  transition:
+    background-color 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 160ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 200ms ease;
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+@keyframes ngPageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ngPanelSwap {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ngModalBackdrop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ngModalCard {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ngToastIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+body {
+  animation: ngPageEnter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ng-panel-enter {
+  animation: ngPanelSwap 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ng-modal-backdrop {
+  animation: ngModalBackdrop 200ms ease-out both;
+}
+
+.ng-modal-card {
+  animation: ngModalCard 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ng-toast {
+  animation: ngToastIn 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.font-mono-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-demo-active] {
+  outline: 3px solid #6366f1;
+  outline-offset: 3px;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.45);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.7);
+}
