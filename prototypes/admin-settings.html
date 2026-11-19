@@ -20,7 +20,7 @@
         <span class="text-slate-300">/</span>
         <span class="text-slate-600">套餐管理、定制报价与客户档案</span>
       </div>
-      <span class="text-xs text-slate-500">管理员：Alex（全权限）</span>
+      <a href="./admin-orders.html" class="text-xs font-medium text-indigo-700 hover:underline">返回订单管理</a>
     </header>
 
     <main class="max-w-5xl mx-auto px-8 py-6 space-y-5">
@@ -131,26 +131,24 @@
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-slate-500 mb-1">交付视频条数</label>
-              <input type="number" value="10" class="w-full px-3 py-2 border border-slate-200 rounded-lg tabular-nums" />
+              <input type="number" id="q-quota" value="10" min="1" required class="w-full px-3 py-2 border border-slate-200 rounded-lg tabular-nums" />
             </div>
             <div>
               <label class="block text-slate-500 mb-1">报价总额 (USD $)</label>
-              <input type="number" id="q-price" value="1250" class="w-full px-3 py-2 border border-slate-200 rounded-lg tabular-nums" />
+              <input type="number" id="q-price" value="1250" min="0.01" step="0.01" required class="w-full px-3 py-2 border border-slate-200 rounded-lg tabular-nums" />
             </div>
           </div>
           <button type="submit" data-demo-id="btn-gen-quote" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg">
-            生成 Stripe 付款链接
+            生成报价链接
           </button>
         </form>
         <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
           <div class="space-y-2">
             <div class="font-semibold">专属 Stripe 付款链接（支持 Card / Apple Pay / ACH）</div>
-            <div id="quote-url" class="p-2.5 bg-white border border-slate-200 rounded font-mono-num text-indigo-700 break-all">
-              https://portal.nextgenavatar.com/checkout?quote=QUOTE-9021&amp;amount=1250&amp;currency=USD
-            </div>
+            <a id="quote-url" href="./checkout.html?quote=QUOTE-9021&amp;amount=1250&amp;quota=10&amp;currency=USD" class="block p-2.5 bg-white border border-slate-200 rounded font-mono-num text-indigo-700 break-all hover:underline">查看定制结算页</a>
             <div class="text-[11px] text-slate-500">客户付款成功后将自动创建订单、入账配额并邮件通知团队。</div>
           </div>
-          <button type="button" onclick="showToast('已复制报价链接')" class="px-3 py-1.5 border border-slate-200 bg-white rounded-lg w-fit mt-3">复制链接</button>
+          <button type="button" onclick="copyQuote()" class="px-3 py-1.5 border border-slate-200 bg-white rounded-lg w-fit mt-3">复制链接</button>
         </div>
       </section>
 
@@ -254,11 +252,13 @@
         <div class="text-sm font-semibold">官网（nextgenavatar.com）套餐跳转链接</div>
         <div class="text-slate-500">在官网套餐按钮中配置下方跳转链接，用户点击后将自动带入所选套餐进入登录与结算流程：</div>
         <div class="p-3 bg-slate-50 border rounded-lg font-mono-num text-indigo-700">https://portal.nextgenavatar.com/auth.html?from=nextgenavatar.com&amp;plan={package_id}&amp;currency=USD&amp;redirect=checkout</div>
+        <a href="./auth.html?plan=pro&amp;redirect=checkout" class="inline-block text-indigo-700 font-medium hover:underline">体验从套餐进入登录</a>
       </section>
     </main>
 
     <div id="cfg-toast" class="hidden ng-toast fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-lg"></div>
 
+    <script src="./flow.js"></script>
     <script>
       const CLIENT_DATA = {
         sarah: {
@@ -334,8 +334,24 @@
       function genQuote(e) {
         e.preventDefault();
         const code = 'QUOTE-' + Math.floor(1000 + Math.random() * 9000);
-        document.getElementById('quote-url').textContent = 'https://portal.nextgenavatar.com/checkout?quote=' + code + '&amount=' + (document.getElementById('q-price').value || 1250) + '&currency=USD';
+        const link = document.getElementById('quote-url');
+        link.href = prototypeFlow.href('checkout', null, {
+          quote: code,
+          amount: document.getElementById('q-price').value,
+          quota: document.getElementById('q-quota').value,
+          currency: 'USD',
+        });
+        link.textContent = `${code} · 查看定制结算页`;
         showToast('已生成 ' + code);
+      }
+
+      async function copyQuote() {
+        try {
+          await navigator.clipboard.writeText(document.getElementById('quote-url').href);
+          showToast('已复制报价链接');
+        } catch {
+          showToast('请打开结算页后复制地址。');
+        }
       }
       let ct;
       function showToast(m) {

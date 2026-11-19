@@ -19,9 +19,9 @@
         <span class="text-base font-bold tracking-tight text-slate-900">NextGen Avatar</span>
         <span class="text-xs text-slate-400">· 客户服务平台</span>
       </div>
-      <a href="#" onclick="return false;" class="text-xs text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 bg-white flex items-center gap-1.5">
+      <a href="../" class="text-xs text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 bg-white flex items-center gap-1.5">
         <i class="fa-solid fa-arrow-left text-[10px]"></i>
-        <span>返回 nextgenavatar.com</span>
+        <span>返回原型首页</span>
       </a>
     </header>
 
@@ -234,8 +234,32 @@
       </div>
     </div>
 
+    <script src="./flow.js"></script>
     <script>
       let currentMode = 'login';
+      let authTimer;
+
+      function showAuthResult(message) {
+        const toast = document.getElementById('auth-toast');
+        document.getElementById('toast-msg').textContent = message;
+        toast.classList.remove('hidden');
+        triggerReplay(toast);
+      }
+
+      function continueAfterLogin() {
+        if (window.frameElement?.hasAttribute('data-demo-playing')) return;
+
+        const params = prototypeFlow.params;
+        const checkoutParams = {};
+        for (const key of ['plan', 'quote', 'amount', 'quota', 'currency']) {
+          if (params.has(key)) checkoutParams[key] = params.get(key);
+        }
+        const destination = params.get('redirect') === 'checkout' || params.has('plan') || params.has('quote')
+          ? prototypeFlow.href('checkout', null, checkoutParams)
+          : prototypeFlow.href('workspace');
+        clearTimeout(authTimer);
+        authTimer = setTimeout(() => location.assign(destination), 650);
+      }
       function triggerReplay(el) {
         if (!el) return;
         el.classList.remove('ng-panel-enter');
@@ -244,6 +268,7 @@
       }
 
       function setAuthMode(mode) {
+        clearTimeout(authTimer);
         currentMode = mode;
         ['login', 'register', 'forgot'].forEach((m) => {
           document.getElementById('tab-' + m).className =
@@ -258,6 +283,7 @@
         document.getElementById('google-auth-wrap').classList.toggle('hidden', mode === 'forgot');
         document.getElementById('field-name').classList.toggle('hidden', mode !== 'register');
         document.getElementById('field-password').classList.toggle('hidden', mode === 'forgot');
+        document.getElementById('input-password').disabled = mode === 'forgot';
         document.getElementById('field-forgot-tip').classList.toggle('hidden', mode !== 'forgot');
         document.getElementById('auth-toast').classList.add('hidden');
         triggerReplay(document.getElementById('auth-body'));
@@ -274,6 +300,7 @@
       }
 
       function selectGoogleAccount(name, email) {
+        const scripted = window.frameElement?.hasAttribute('data-demo-playing');
         document.getElementById('oauth-chooser').classList.add('hidden');
         const verifying = document.getElementById('oauth-verifying');
         document.getElementById('oauth-verify-text').textContent = '正在验证 ' + name + ' (' + email + ')…';
@@ -283,23 +310,23 @@
         setTimeout(() => {
           closeGoogleOAuth();
           document.getElementById('input-email').value = email;
-          document.getElementById('toast-msg').textContent =
-            'Google 账号 (' + email + ') 登录成功，正在进入工作台…';
-          const toast = document.getElementById('auth-toast');
-          toast.classList.remove('hidden');
-          triggerReplay(toast);
+          showAuthResult('Google 账号 (' + email + ') 登录成功，正在进入平台…');
+          if (!scripted) continueAfterLogin();
         }, 520);
       }
 
       function handleAuthSubmit(e) {
         e.preventDefault();
         const email = document.getElementById('input-email').value;
-        document.getElementById('toast-msg').textContent =
-          currentMode === 'forgot' ? '重置链接已发送至 ' + email : '登录成功，正在进入工作台…';
-        const toast = document.getElementById('auth-toast');
-        toast.classList.remove('hidden');
-        triggerReplay(toast);
+        if (currentMode === 'forgot') {
+          showAuthResult('已模拟向 ' + email + ' 发送重置链接。');
+          return;
+        }
+        showAuthResult(currentMode === 'register' ? '注册成功，正在进入平台…' : '登录成功，正在进入平台…');
+        continueAfterLogin();
       }
+
+      if (prototypeFlow.params.get('mode') === 'register') setAuthMode('register');
     </script>
   </body>
 </html>

@@ -29,6 +29,7 @@
           <a href="./admin-settings.html" id="nav-pricing" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800">
             <i class="fa-solid fa-sliders w-4 text-center"></i>套餐与客户管理
           </a>
+          <a href="../" class="block px-3 py-2.5 rounded-lg hover:bg-slate-800">返回原型首页</a>
         </nav>
       </div>
 
@@ -47,6 +48,7 @@
       <header class="h-14 bg-white border-b border-slate-200 px-8 flex items-center justify-between shrink-0 relative">
         <span id="page-title" class="text-sm font-semibold">订单管理与工作列表</span>
         <div class="flex items-center gap-3">
+          <a id="role-switch" class="text-xs font-medium text-indigo-700 hover:underline"></a>
           <input
             type="text"
             oninput="searchOrders(this.value)"
@@ -139,7 +141,7 @@
                 </td>
                 <td class="py-3.5 px-5 text-right space-x-1.5 whitespace-nowrap">
                   <button type="button" data-demo-id="btn-view-order" onclick="openOrderDetail('#NGA-20261117', 'Sarah Lin · Apex Labs', 'Pro 5-Pack', 'Stripe 已付款 $299', '5 / 5 条', '等待素材')" class="px-2.5 py-1 border border-slate-200 rounded hover:bg-slate-50">详情</button>
-                  <button type="button" onclick="showAdminToast('进入协同台')" class="px-2.5 py-1 bg-indigo-600 text-white rounded">处理</button>
+                  <a data-work-order="NGA-20261117" data-demo-id="btn-work-order" class="inline-block px-2.5 py-1 bg-indigo-600 text-white rounded">处理</a>
                 </td>
               </tr>
 
@@ -166,7 +168,7 @@
                 </td>
                 <td class="py-3.5 px-5 text-right space-x-1.5 whitespace-nowrap">
                   <button type="button" onclick="openOrderDetail('#NGA-20261108', 'Sarah Lin · Apex Labs', 'Pro 5-Pack', 'Stripe 已付款 $349', '4 / 5 条', '等待客户确认 v2')" class="px-2.5 py-1 border border-slate-200 rounded hover:bg-slate-50">详情</button>
-                  <button type="button" onclick="showAdminToast('进入协同台查看预览 v2')" class="px-2.5 py-1 border border-slate-200 rounded hover:bg-slate-50">查看</button>
+                  <a data-work-order="NGA-20261108" class="inline-block px-2.5 py-1 border border-slate-200 rounded hover:bg-slate-50">查看</a>
                 </td>
               </tr>
 
@@ -192,7 +194,7 @@
                   <span class="owner-readonly hidden font-medium text-slate-700">Maya</span>
                 </td>
                 <td class="py-3.5 px-5 text-right whitespace-nowrap">
-                  <button type="button" onclick="showAdminToast('进入协同台上传修改版')" class="px-3 py-1 bg-indigo-600 text-white rounded">传新版</button>
+                  <a data-work-order="NGA-20261105" class="inline-block px-3 py-1 bg-indigo-600 text-white rounded">传新版</a>
                 </td>
               </tr>
 
@@ -218,7 +220,7 @@
                   <span class="owner-readonly hidden font-medium text-slate-700">Liam</span>
                 </td>
                 <td class="py-3.5 px-5 text-right whitespace-nowrap">
-                  <button type="button" onclick="showAdminToast('进入协同台上传初稿')" class="px-3 py-1 border border-slate-200 rounded hover:bg-slate-50">传初稿</button>
+                  <a data-work-order="NGA-20261112" class="inline-block px-3 py-1 border border-slate-200 rounded hover:bg-slate-50">传初稿</a>
                 </td>
               </tr>
 
@@ -238,7 +240,7 @@
                   <span class="owner-readonly hidden text-slate-600">Leo Chen</span>
                 </td>
                 <td class="py-3.5 px-5 text-right whitespace-nowrap">
-                  <button type="button" onclick="showAdminToast('查看归档记录')" class="px-3 py-1 border border-slate-200 rounded text-slate-600">归档</button>
+                  <a data-work-order="NGA-20261024" class="inline-block px-3 py-1 border border-slate-200 rounded text-slate-600">归档</a>
                 </td>
               </tr>
             </tbody>
@@ -278,38 +280,64 @@
         </div>
         <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex justify-end gap-2">
           <button type="button" onclick="closeOrderDetail()" class="px-3.5 py-1.5 border border-slate-200 bg-white rounded-lg">关闭</button>
-          <button type="button" onclick="closeOrderDetail(); showAdminToast('已进入订单协同台');" class="px-3.5 py-1.5 bg-indigo-600 text-white rounded-lg font-medium">打开制作协同台</button>
+          <a id="detail-workspace-link" class="px-3.5 py-1.5 bg-indigo-600 text-white rounded-lg font-medium">打开制作协同台</a>
         </div>
       </div>
     </div>
 
     <div id="admin-toast" class="hidden ng-toast fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-lg"></div>
 
+    <script src="./flow.js"></script>
     <script>
-      const params = new URLSearchParams(window.location.search);
+      const params = prototypeFlow.params;
       const initialRole = params.get('role') === 'producer' ? 'producer' : 'admin';
-      if (params.get('assigned') === 'NGA-20261117') {
-        const firstRow = document.getElementById('row-20261117');
-        if (firstRow) firstRow.dataset.owner = 'Leo Chen';
-      }
 
       let currentRole = initialRole;
       let currentState = 'all';
       let currentQuery = '';
       const PRODUCER_NAME = 'Leo Chen';
+      const roleQuery = initialRole === 'producer' ? { role: 'producer' } : {};
+      const roleSwitch = document.getElementById('role-switch');
+      roleSwitch.href = prototypeFlow.href('admin-orders', prototypeFlow.currentOrder(), { role: initialRole === 'admin' ? 'producer' : 'admin' });
+      roleSwitch.textContent = initialRole === 'admin' ? '切换到制作人员视角' : '切换到管理员视角';
+
+      document.querySelectorAll('[data-work-order]').forEach((link) => {
+        const orderId = link.dataset.workOrder;
+        const order = prototypeFlow.getOrder(orderId);
+        link.href = prototypeFlow.href('admin-workspace', orderId, roleQuery);
+        const row = link.closest('tr');
+        row.dataset.order = orderId;
+        if (order.owner) {
+          row.dataset.owner = order.owner;
+          const select = row.querySelector('select');
+          if (select) select.value = order.owner;
+        }
+        row.dataset.state = order.status === 'approved' ? 'producing' : order.status;
+        row.cells[2].querySelector('span').textContent = prototypeFlow.statusLabel[order.status];
+        if (order.paid) {
+          row.querySelector('.pay-amount').textContent = `Stripe 已付 $${order.total.toLocaleString()}`;
+          row.querySelector('.pay-masked').textContent = order.package;
+          row.cells[1].lastElementChild.textContent = `${order.package} · 剩余 ${order.quota - Number(order.status === 'completed')}/${order.quota} 条`;
+        }
+      });
+      const firstRow = document.getElementById('row-20261117');
+      document.getElementById('quick-assign-btn').classList.toggle('hidden', firstRow.dataset.owner !== 'unassigned');
 
       function toggleAdminNotif() {
         document.getElementById('admin-notif-panel').classList.toggle('hidden');
       }
 
       function openOrderDetail(id, client, pkg, pay, quota, state) {
+        const orderId = id.slice(1);
+        const order = prototypeFlow.getOrder(orderId);
         document.getElementById('od-id').textContent = id;
         document.getElementById('od-client').textContent = client;
-        document.getElementById('od-pkg').textContent = pkg;
-        document.getElementById('od-pay').textContent = currentRole === 'admin' ? pay : '已授权制作（金额保密）';
+        document.getElementById('od-pkg').textContent = order.package || pkg;
+        document.getElementById('od-pay').textContent = currentRole === 'admin' ? (order.paid ? `Stripe 已付款 $${order.total.toLocaleString()}` : pay) : '已授权制作（金额保密）';
         document.getElementById('od-pay').className = currentRole === 'admin' ? 'font-medium text-emerald-700' : 'font-medium text-slate-400';
-        document.getElementById('od-quota').textContent = quota;
-        document.getElementById('od-state').textContent = state;
+        document.getElementById('od-quota').textContent = order.paid ? `${order.quota - Number(order.status === 'completed')} / ${order.quota} 条` : quota;
+        document.getElementById('od-state').textContent = prototypeFlow.statusLabel[order.status] || state;
+        document.getElementById('detail-workspace-link').href = prototypeFlow.href('admin-workspace', orderId, roleQuery);
         document.getElementById('order-detail-modal').classList.remove('hidden');
       }
 
@@ -320,6 +348,7 @@
       function assignOwner(sel) {
         const tr = sel.closest('.order-tr');
         tr.dataset.owner = sel.value || 'unassigned';
+        prototypeFlow.updateOrder(tr.dataset.order, { owner: tr.dataset.owner });
         if (sel.id === 'select-first-order') {
           const btn = document.getElementById('quick-assign-btn');
           if (btn) btn.classList.toggle('hidden', sel.value !== 'unassigned');

@@ -20,37 +20,45 @@
         <span class="text-slate-300">/</span>
         <span class="text-slate-600">订单聊天</span>
       </div>
-      <span class="text-xs text-slate-500">剩余配额：<strong class="text-slate-900 tabular-nums">4 条</strong></span>
+      <nav class="flex items-center gap-4 text-xs" aria-label="订单导航">
+        <a href="./workspace.html" class="text-slate-600 hover:underline">返回工作台</a>
+        <a id="chat-team-link" data-demo-id="btn-chat-team" class="font-medium text-indigo-600 hover:underline">切换到制作团队</a>
+        <span class="text-slate-500">剩余配额：<strong id="chat-quota" class="text-slate-900 tabular-nums">4 条</strong></span>
+      </nav>
     </header>
 
     <div class="flex-1 min-h-0 grid grid-cols-12">
       <!-- 订单列表 -->
       <aside class="col-span-3 bg-white border-r border-slate-200 overflow-y-auto divide-y divide-slate-100">
-        <button type="button" onclick="selectThread(this, '#NGA-20261108', 'Q4 新品发布会口播')" class="w-full text-left p-4 bg-indigo-50/50 border-r-2 border-indigo-600">
+        <a id="new-thread" href="./order-chat.html?order=NGA-20261117" data-thread="NGA-20261117" class="hidden block p-4 text-xs hover:bg-slate-50">
+          <div class="font-mono-num font-semibold">#NGA-20261117</div>
+          <div class="mt-1 truncate text-slate-700">数字人视频制作</div>
+        </a>
+        <a href="./order-chat.html?order=NGA-20261108" data-thread="NGA-20261108" class="block p-4 hover:bg-slate-50">
           <div class="flex justify-between text-xs mb-1">
             <span class="font-mono-num font-semibold">#NGA-20261108</span>
             <span class="text-indigo-600 font-semibold">2 未读</span>
           </div>
           <div class="text-xs text-slate-700 truncate">Q4 新品发布会口播</div>
           <div class="text-[11px] text-slate-400 mt-1">等待确认</div>
-        </button>
+        </a>
 
-        <button type="button" onclick="selectThread(this, '#NGA-20261115', 'Black Friday 大促口播')" class="w-full text-left p-4 hover:bg-slate-50">
+        <a href="./order-chat.html?order=NGA-20261115" data-thread="NGA-20261115" class="block p-4 hover:bg-slate-50">
           <div class="flex justify-between text-xs mb-1">
             <span class="font-mono-num font-semibold">#NGA-20261115</span>
             <span class="text-slate-400">昨天</span>
           </div>
           <div class="text-xs text-slate-700 truncate">Black Friday 大促口播</div>
           <div class="text-[11px] text-slate-400 mt-1">等待素材</div>
-        </button>
+        </a>
 
-        <button type="button" onclick="selectThread(this, '#NGA-20261024', '创始人年度致辞')" class="w-full text-left p-4 hover:bg-slate-50">
+        <a href="./order-chat.html?order=NGA-20261024" data-thread="NGA-20261024" class="block p-4 hover:bg-slate-50">
           <div class="flex justify-between text-xs mb-1">
             <span class="font-mono-num font-semibold">#NGA-20261024</span>
             <span class="text-emerald-700">已交付</span>
           </div>
           <div class="text-xs text-slate-700 truncate">创始人年度致辞</div>
-        </button>
+        </a>
       </aside>
 
       <!-- 主聊天窗 -->
@@ -61,12 +69,12 @@
             <span class="text-slate-300 mx-1.5">·</span>
             <span id="chat-order-title" class="font-medium text-slate-800">Q4 新品发布会口播</span>
           </div>
-          <span class="text-slate-500">制作师：Leo Chen</span>
+          <span id="chat-producer" class="text-slate-500">制作师：Leo Chen</span>
         </div>
 
         <div id="chat-stream" class="flex-1 overflow-y-auto p-5 space-y-4">
           <!-- 客户上传素材 -->
-          <div class="flex items-start justify-end gap-2.5">
+          <div id="chat-sample-assets" class="flex items-start justify-end gap-2.5">
             <div class="max-w-sm space-y-2">
               <div class="bg-indigo-600 text-white text-xs px-3.5 py-2 rounded-xl rounded-tr-sm">
                 正面照、音频和口播台词已上传，请查收。
@@ -92,11 +100,11 @@
           </div>
 
           <!-- 团队发回预览视频 -->
-          <div class="flex items-start gap-2.5">
+          <div id="chat-preview" class="flex items-start gap-2.5">
             <img src="../src/assets/images/team_producer_headshot_1794909269757.jpg" class="w-7 h-7 rounded-full object-cover shrink-0" referrerPolicy="no-referrer" />
             <div class="max-w-sm space-y-2">
               <div class="bg-white border border-slate-200 text-xs px-3.5 py-2 rounded-xl rounded-tl-sm">
-                初稿 v2 已渲染完成，请在线预览或下载：
+                <span id="chat-preview-description">初稿 v2 已渲染完成，请在线预览或下载：</span>
               </div>
               <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
                 <div class="relative aspect-video bg-slate-900 cursor-pointer" onclick="openChatVideo()">
@@ -222,21 +230,23 @@
       <!-- 右侧信息 -->
       <aside class="col-span-3 bg-white border-l border-slate-200 p-4 space-y-5 text-xs">
         <div class="p-3 rounded-lg bg-amber-50 border border-amber-200 space-y-2">
-          <div class="font-semibold text-amber-900">等待客户确认 v2</div>
-          <button type="button" class="w-full py-1.5 bg-amber-600 text-white rounded-md font-medium">去审核视频</button>
+          <div id="chat-order-status" class="font-semibold text-amber-900">等待客户确认 v2</div>
+          <a id="chat-review-link" data-demo-id="btn-chat-review" class="block w-full py-1.5 bg-amber-600 text-white rounded-md font-medium text-center">去审核视频</a>
         </div>
         <div class="pt-3 border-t border-slate-200 space-y-2">
           <div class="font-semibold">绑定人物档案</div>
           <div class="flex items-center gap-2.5 p-2 rounded-lg bg-slate-50 border border-slate-200">
             <img src="../src/assets/images/avatar_presenter_studio_1794909268258.jpg" class="w-9 h-9 rounded object-cover" referrerPolicy="no-referrer" />
-            <span class="font-medium truncate">Sarah · 商务白西装</span>
+            <span id="chat-profile" class="font-medium truncate">Sarah · 商务白西装</span>
           </div>
         </div>
-        <div class="pt-3 border-t border-slate-200 space-y-1.5 text-slate-600">
+        <div id="chat-file-list" class="pt-3 border-t border-slate-200 space-y-1.5 text-slate-600">
           <div class="font-semibold text-slate-900">本单文件</div>
-          <div class="truncate">· Sarah_正面照.jpg</div>
-          <div class="truncate">· 干声样本_48kHz.wav</div>
-          <div class="truncate text-indigo-600">· 预览视频_v2.mp4</div>
+          <div id="chat-sample-files">
+            <div class="truncate">· Sarah_正面照.jpg</div>
+            <div class="truncate">· 干声样本_48kHz.wav</div>
+            <div class="truncate text-indigo-600">· 预览视频_v2.mp4</div>
+          </div>
         </div>
       </aside>
     </div>
@@ -253,43 +263,74 @@
 
     <div id="banner-toast" class="hidden ng-toast fixed top-16 right-5 bg-slate-900 text-white text-xs px-3.5 py-2 rounded-lg"></div>
 
+    <script src="./flow.js"></script>
     <script>
-      function selectThread(btn, id, title) {
-        document.getElementById('chat-order-id').textContent = id;
-        document.getElementById('chat-order-title').textContent = title;
-        btn.parentElement.querySelectorAll('button').forEach((b) => (b.className = 'w-full text-left p-4 hover:bg-slate-50'));
-        btn.className = 'w-full text-left p-4 bg-indigo-50/50 border-r-2 border-indigo-600';
-        const stream = document.getElementById('chat-stream');
-        stream.classList.remove('ng-panel-enter');
-        void stream.offsetWidth;
-        stream.classList.add('ng-panel-enter');
+      const orderId = prototypeFlow.currentOrder();
+      const order = prototypeFlow.getOrder(orderId);
+      const canReview = ['waiting_confirm', 'revision', 'approved', 'completed'].includes(order.status);
+      const stream = document.getElementById('chat-stream');
+      document.getElementById('chat-order-id').textContent = `#${orderId}`;
+      document.getElementById('chat-order-title').textContent = order.title;
+      document.getElementById('chat-order-status').textContent = prototypeFlow.statusLabel[order.status];
+      const teamPage = orderId === 'NGA-20261115' ? 'admin-workspace' : 'admin-orders';
+      document.getElementById('chat-team-link').href = prototypeFlow.href(teamPage, orderId);
+      const reviewLink = document.getElementById('chat-review-link');
+      reviewLink.href = prototypeFlow.href('video-review', orderId);
+      reviewLink.classList.toggle('hidden', !canReview);
+      if (order.status === 'completed') reviewLink.textContent = '查看正式成片';
+      if (orderId === prototypeFlow.newOrder || prototypeFlow.getOrder(prototypeFlow.newOrder).paid) {
+        document.getElementById('new-thread').classList.remove('hidden');
       }
+      const activeThread = document.querySelector(`[data-thread="${orderId}"]`);
+      activeThread?.classList.add('bg-indigo-50/50', 'border-r-2', 'border-indigo-600');
+      activeThread?.setAttribute('aria-current', 'page');
+      document.getElementById('chat-sample-assets').classList.toggle('hidden', orderId !== prototypeFlow.sampleOrder);
+      document.getElementById('chat-sample-files').classList.toggle('hidden', orderId !== prototypeFlow.sampleOrder);
+      document.getElementById('chat-preview').classList.toggle('hidden', !canReview);
+      if (order.status === 'completed') document.getElementById('chat-preview-description').textContent = '制作团队已交付正式成片。';
+      if (order.owner) document.getElementById('chat-producer').textContent = order.owner === 'unassigned' ? '待分配制作师' : `制作师：${order.owner}`;
+      if (order.paid) document.getElementById('chat-quota').textContent = `${order.quota - Number(order.status === 'completed')} 条`;
+      if (order.profile === 'David') document.getElementById('chat-profile').textContent = 'David · 男性创始人';
+
+      function renderEntry({ kind, text }) {
+        const entry = document.createElement('div');
+        const bubble = document.createElement('div');
+        const fromTeam = kind === 'team';
+        entry.className = `flex ${fromTeam ? 'justify-start' : 'justify-end'} ng-panel-enter`;
+        bubble.className = 'max-w-sm rounded-xl px-3.5 py-2 text-xs break-words ' +
+          (kind === 'message' ? 'bg-indigo-600 text-white' : 'border border-slate-200 bg-white text-slate-900');
+        bubble.textContent = kind === 'file' ? `${text} · 已上传` : text;
+        entry.appendChild(bubble);
+        stream.appendChild(entry);
+        if (kind === 'file') {
+          const file = document.createElement('div');
+          file.className = 'truncate';
+          file.textContent = `· ${text}`;
+          document.getElementById('chat-file-list').appendChild(file);
+        }
+        stream.scrollTop = stream.scrollHeight;
+      }
+      (order.entries ?? []).forEach(renderEntry);
       function sendTextMessage(e) {
         e.preventDefault();
         const input = document.getElementById('chat-input');
         const val = input.value.trim();
         if (!val) return;
-        const stream = document.getElementById('chat-stream');
-        const div = document.createElement('div');
-        div.className = 'flex items-start justify-end gap-2.5 ng-panel-enter';
-        div.innerHTML = `<div class="bg-indigo-600 text-white text-xs px-3.5 py-2 rounded-xl rounded-tr-sm max-w-sm">${val}</div><img src="../src/assets/images/client_user_avatar_1794909270826.jpg" class="w-7 h-7 rounded-full object-cover shrink-0" />`;
-        stream.appendChild(div);
+        prototypeFlow.addEntry(orderId, 'message', val);
+        renderEntry({ kind: 'message', text: val });
         input.value = '';
-        stream.scrollTop = stream.scrollHeight;
       }
       function appendUpload(name) {
-        const stream = document.getElementById('chat-stream');
-        const div = document.createElement('div');
-        div.className = 'flex items-start justify-end gap-2.5 ng-panel-enter';
-        div.innerHTML = `<div class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs flex items-center gap-2"><i class="fa-solid fa-paperclip text-indigo-600"></i><span>${name}</span><span class="text-emerald-600">已上传</span></div><img src="../src/assets/images/client_user_avatar_1794909270826.jpg" class="w-7 h-7 rounded-full object-cover shrink-0" />`;
-        stream.appendChild(div);
-        stream.scrollTop = stream.scrollHeight;
+        prototypeFlow.addEntry(orderId, 'file', name);
+        renderEntry({ kind: 'file', text: name });
       }
       function triggerFailedUpload() {
         document.getElementById('retry-upload-card').classList.remove('hidden');
         document.getElementById('chat-stream').scrollTop = document.getElementById('chat-stream').scrollHeight;
       }
       function retryFailedUpload() {
+        document.getElementById('retry-btn').disabled = true;
+        appendUpload('参考视频_4K.mp4');
         document.getElementById('retry-status').textContent = '已完成 100%';
         document.getElementById('retry-status').className = 'text-emerald-600';
         document.getElementById('retry-bar').className = 'h-full bg-emerald-600 w-full';

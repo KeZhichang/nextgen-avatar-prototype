@@ -18,13 +18,17 @@
       <div class="flex items-center gap-3 text-sm">
         <span class="font-bold">NextGen Avatar</span>
         <span class="text-slate-300">/</span>
-        <span class="font-mono-num text-slate-700">#NGA-20261108 · Q4 新品发布会口播</span>
+        <span id="review-order" class="font-mono-num text-slate-700">#NGA-20261108 · Q4 新品发布会口播</span>
       </div>
-      <span id="header-badge" class="text-xs font-medium text-amber-700 bg-amber-50 px-3 py-1 rounded-lg">等待确认初稿 v2</span>
+      <nav class="flex items-center gap-3 text-xs" aria-label="审核导航">
+        <a id="review-chat" class="text-slate-600 hover:underline">返回订单聊天</a>
+        <a href="./workspace.html" class="text-slate-600 hover:underline">返回工作台</a>
+        <span id="header-badge" class="font-medium text-amber-700 bg-amber-50 px-3 py-1 rounded-lg">等待确认初稿 v2</span>
+      </nav>
     </header>
 
     <main class="max-w-5xl mx-auto px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      <div class="lg:col-span-8 space-y-5">
+      <div id="review-content" class="lg:col-span-8 space-y-5">
         <div class="flex items-center justify-between bg-white border border-slate-200 rounded-xl p-3">
           <div class="flex items-center gap-1 p-1 bg-slate-100 rounded-lg text-xs">
             <button type="button" data-demo-id="btn-review-first-version" onclick="switchVersion('v1')" id="ver-v1" class="px-3 py-1.5 rounded-md text-slate-600">初稿 v1</button>
@@ -63,22 +67,27 @@
 
       <aside class="lg:col-span-4 bg-white border border-slate-200 rounded-xl p-5 space-y-5">
         <div id="approve-box" class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-3">
-          <div class="text-xs font-semibold text-emerald-900">确认无误即可交付（扣 1 条配额）</div>
+          <div class="text-xs font-semibold text-emerald-900">确认通过后，由制作团队交付正式成片。</div>
           <button
             type="button"
             data-demo-id="btn-approve-video"
             onclick="approveVideo()"
             class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg"
           >
-            确认通过并交付
+            确认通过
           </button>
         </div>
 
         <div id="delivered-box" class="hidden p-4 rounded-xl bg-emerald-50 border border-emerald-300 space-y-3 text-xs">
-          <div class="font-semibold text-emerald-900"><i class="fa-solid fa-circle-check text-emerald-600 mr-1.5"></i>已确认交付（剩余 3 条）</div>
+          <div id="review-delivered-message" class="font-semibold text-emerald-900">已交付正式成片</div>
           <button type="button" onclick="showReviewToast('开始下载无水印成片 (MP4)')" class="w-full py-2.5 bg-indigo-600 text-white font-medium rounded-lg">
             下载无水印成片
           </button>
+        </div>
+
+        <div id="review-next" class="hidden space-y-3 text-xs">
+          <div id="review-next-message" class="font-semibold text-slate-900"></div>
+          <a id="review-studio" data-demo-id="btn-review-studio" class="block rounded-lg border border-indigo-200 py-2 text-center font-medium text-indigo-700 hover:bg-indigo-50">返回制作协同台</a>
         </div>
 
         <form id="revision-form" onsubmit="submitRevision(event)" class="pt-4 border-t border-slate-200 space-y-3">
@@ -93,7 +102,50 @@
 
     <div id="review-toast" class="hidden ng-toast fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-lg"></div>
 
+    <script src="./flow.js"></script>
     <script>
+      const orderId = prototypeFlow.currentOrder();
+      const order = prototypeFlow.getOrder(orderId);
+      const role = prototypeFlow.params.get('role') === 'producer' ? { role: 'producer' } : {};
+      const historyLog = document.getElementById('history-log');
+      document.getElementById('review-order').textContent = `#${orderId} · ${order.title}`;
+      document.getElementById('review-chat').href = prototypeFlow.href('order-chat', orderId);
+      document.getElementById('review-studio').href = prototypeFlow.href('admin-workspace', orderId, role);
+      if (orderId !== prototypeFlow.sampleOrder) historyLog.replaceChildren();
+      if (order.previewNote) addRecord(order.previewNote);
+      if (order.revision) addRecord(`申请修改 · ${order.revision}`);
+      refreshReview(order.status);
+
+      function addRecord(text) {
+        const entry = document.createElement('div');
+        entry.className = 'pb-2 border-b border-slate-100 text-slate-700';
+        entry.textContent = text;
+        historyLog.prepend(entry);
+      }
+
+      function refreshReview(status) {
+        const badge = document.getElementById('header-badge');
+        badge.textContent = prototypeFlow.statusLabel[status];
+        const canApprove = status === 'waiting_confirm';
+        const delivered = status === 'completed';
+        const hasPreview = ['waiting_confirm', 'revision', 'approved', 'completed'].includes(status);
+        document.getElementById('review-content').classList.toggle('hidden', !hasPreview);
+        document.getElementById('approve-box').classList.toggle('hidden', !canApprove);
+        document.getElementById('revision-form').classList.toggle('hidden', !canApprove);
+        document.getElementById('delivered-box').classList.toggle('hidden', !delivered);
+        document.getElementById('ver-final').hidden = !delivered;
+        document.getElementById('review-next').classList.toggle('hidden', canApprove || delivered);
+        const nextMessages = {
+          approved: '已确认通过，等待制作团队交付正式成片。',
+          revision: '已提交修改意见，等待制作团队推送新版本。',
+        };
+        document.getElementById('review-next-message').textContent = nextMessages[status] || '制作团队尚未推送预览。';
+        if (delivered) {
+          switchVersion('final');
+          if (order.paid) document.getElementById('review-delivered-message').textContent = `已交付正式成片（剩余 ${order.quota - 1} 条）`;
+        }
+      }
+
       function switchVersion(v) {
         ['v1', 'v2', 'final'].forEach((k) => {
           document.getElementById('ver-' + k).className =
@@ -110,28 +162,17 @@
         i.className = i.className.includes('play') ? 'fa-solid fa-pause text-[10px]' : 'fa-solid fa-play text-[10px]';
       }
       function approveVideo() {
-        document.getElementById('approve-box').classList.add('hidden');
-        document.getElementById('revision-form').classList.add('hidden');
-        const delivered = document.getElementById('delivered-box');
-        delivered.classList.remove('hidden');
-        delivered.classList.add('ng-panel-enter');
-        const badge = document.getElementById('header-badge');
-        badge.className = 'text-xs font-medium text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg ng-panel-enter';
-        badge.textContent = '已确认交付';
-        switchVersion('final');
-        const item = document.createElement('div');
-        item.className = 'flex justify-between pb-2 border-b border-slate-100 text-emerald-700 ng-panel-enter';
-        item.innerHTML = '<span><strong>正式版</strong> 客户确认通过</span><span class="font-mono-num">刚刚</span>';
-        document.getElementById('history-log').prepend(item);
+        prototypeFlow.updateOrder(orderId, { status: 'approved' });
+        addRecord('客户确认通过');
+        refreshReview('approved');
       }
       function submitRevision(e) {
         e.preventDefault();
         const note = document.getElementById('revision-note').value.trim() || '请微调口播停顿';
-        const item = document.createElement('div');
-        item.className = 'flex justify-between pb-2 border-b border-slate-100 text-amber-700 ng-panel-enter';
-        item.innerHTML = `<span><strong>v2</strong> 申请修改 · ${note}</span><span class="font-mono-num">刚刚</span>`;
-        document.getElementById('history-log').prepend(item);
+        prototypeFlow.updateOrder(orderId, { status: 'revision', revision: note });
+        addRecord(`申请修改 · ${note}`);
         document.getElementById('revision-note').value = '';
+        refreshReview('revision');
       }
       let rt;
       function showReviewToast(m) {
